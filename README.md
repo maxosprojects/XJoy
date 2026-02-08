@@ -4,6 +4,8 @@ XJoy is a XInput to vJoy feeder application written in c#.
 
 ![](https://github.com/MasterKenth/XJoy/blob/master/extra/icon_128.png)
 
+Signed version of vJoy: https://github.com/BrunnerInnovation/vJoy/releases/tag/v2.2.2.0
+
 It is used to map XInput keys and axes to vJoy equivalents, essentially converting XInput to DirectInput. This has the benefit of making newer controllers work with a range of legacy and cross-platform games and interfaces, such as SDL.
 
 This project first came to be when I wanted to use an Nvidia Shield Controller (XInput only device) with the FCEUX emulator (doesn't appear to support XInput).
