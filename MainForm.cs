@@ -1113,11 +1113,15 @@ private void onInputMappingChanged(object sender, EventArgs e)
 		{
 			foreach (DataGridViewRow row in mappingGrid.Rows)
 			{
-				var cell = row.Cells[1] as DataGridViewComboBoxCell;
-				if (cell == null)
-					continue;
-				if (cell.Items.Count > 0)
-					cell.Value = cell.Items[0];
+				for (int group = 0; group < ColumnGroupCount; group++)
+				{
+					int colBase = group * 4;
+					var cell = row.Cells[colBase + 1] as DataGridViewComboBoxCell;
+					if (cell == null || cell.Tag == null)
+						continue;
+					if (cell.Items.Count > 0)
+						cell.Value = cell.Items[0];
+				}
 			}
 		}
 
