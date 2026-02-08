@@ -701,7 +701,8 @@ else if (left == "vjoy")
 					HidExtents.Add(axis, vJoyObj.GetAxisExtents(axis));
 				}
 
-				int povCount = vJoyObj.GetPovCount(vJoyObj.ActiveVJoyID);
+				var povCounts = vJoyObj.GetPovCounts(vJoyObj.ActiveVJoyID);
+				int povCount = Math.Max(povCounts.cont, povCounts.disc);
 				int[] finalPovValues = new int[povCount];
 				for (int i = 0; i < povCount; i++)
 					finalPovValues[i] = -1;
@@ -767,13 +768,45 @@ else if (left == "vjoy")
 					}
 
 					for (uint i = 0; i < finalPovValues.Length; i++)
-						vJoyObj.SetPov(i + 1, finalPovValues[i]);
+					{
+						var value = finalPovValues[i];
+						if (povCounts.disc > 0 && povCounts.cont == 0)
+						{
+							vJoyObj.SetDiscPov(i + 1, ConvertPovToDisc(value));
+						}
+						else
+						{
+							vJoyObj.SetPov(i + 1, value);
+						}
+					}
 
 					Thread.Sleep(16);
 				}
 			}
 			catch (ThreadAbortException)
 			{
+			}
+		}
+
+		static int ConvertPovToDisc(int value)
+		{
+			// DirectInput POV: -1 neutral, 0=up, 9000=right, 18000=down, 27000=left.
+			if (value < 0)
+				return -1;
+			switch (value)
+			{
+				case 0:
+					return 0;
+				case 9000:
+					return 1;
+				case 18000:
+					return 2;
+				case 27000:
+					return 3;
+				default:
+					// Round to nearest 90 degrees.
+					int snapped = (int)Math.Round(value / 9000.0) % 4;
+					return snapped;
 			}
 		}
 

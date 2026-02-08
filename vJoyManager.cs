@@ -200,6 +200,13 @@ public class AnalogInput
 			int disc = m_joystick.GetVJDDiscPovNumber(Index);
 			return Math.Max(cont, disc);
 		}
+
+		public (int cont, int disc) GetPovCounts(uint Index)
+		{
+			int cont = m_joystick.GetVJDContPovNumber(Index);
+			int disc = m_joystick.GetVJDDiscPovNumber(Index);
+			return (cont, disc);
+		}
 public int GetButtonCount(uint Index)
 		{
 			return m_joystick.GetVJDButtonNumber(Index);
@@ -243,6 +250,15 @@ public int GetButtonCount(uint Index)
 			{
 				// vJoy POV index is 1-based; Value is -1 (neutral) or 0-35999.
 				m_joystick.SetContPov(Value, m_vJoyID, PovIndex);
+			}
+		}
+
+		public void SetDiscPov(uint PovIndex, int Value)
+		{
+			if (bDeviceAcquired)
+			{
+				// vJoy discrete POV value: -1 (neutral) or 0-3 (0=up,1=right,2=down,3=left)
+				m_joystick.SetDiscPov(Value, m_vJoyID, PovIndex);
 			}
 		}
 public void SetAxis(HID_USAGES Axis, int Value)
