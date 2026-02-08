@@ -87,6 +87,7 @@ namespace XJoy
 		vJoyManager vJoyObj;
 		bool bIsActive = false;
 		bool hidGuardianWhitelisted = false;
+		bool showLiveValues = false;
 		const int ColumnGroupCount = 3;
 
 		List<DeviceListItem> DirectInputDevices = new List<DeviceListItem>();
@@ -868,7 +869,7 @@ else if (left == "vjoy")
 						}
 					}
 
-					if ((DateTime.UtcNow - lastValueUpdate).TotalMilliseconds >= 100)
+					if (showLiveValues && (DateTime.UtcNow - lastValueUpdate).TotalMilliseconds >= 100)
 					{
 						lastValueUpdate = DateTime.UtcNow;
 						UpdateValueCells(stateData, stateData2);
@@ -882,7 +883,28 @@ else if (left == "vjoy")
 			}
 		}
 
-		void UpdateValueCells(DirectInputManager.InputState stateA, DirectInputManager.InputState stateB)
+		void ClearValueCells()
+		{
+			if (mappingGrid.IsDisposed)
+				return;
+			if (mappingGrid.InvokeRequired)
+			{
+				mappingGrid.BeginInvoke((Action)(ClearValueCells));
+				return;
+			}
+			foreach (DataGridViewRow row in mappingGrid.Rows)
+			{
+				for (int group = 0; group < ColumnGroupCount; group++)
+				{
+					int colBase = group * 4;
+					var valueCell = row.Cells[colBase + 2];
+					if (valueCell != null)
+						valueCell.Value = "";
+				}
+			}
+		}
+
+void UpdateValueCells(DirectInputManager.InputState stateA, DirectInputManager.InputState stateB)
 		{
 			if (mappingGrid.IsDisposed)
 				return;
@@ -1073,6 +1095,13 @@ private void comboVJoyDevices_SelectedIndexChanged(object sender, EventArgs e)
 		private void buttonRefresh_Click(object sender, EventArgs e)
 		{
 			RefreshDeviceList();
+		}
+
+		private void checkBoxShowValues_CheckedChanged(object sender, EventArgs e)
+		{
+			showLiveValues = checkBoxShowValues.Checked;
+			if (!showLiveValues)
+				ClearValueCells();
 		}
 
 private void onInputMappingChanged(object sender, EventArgs e)

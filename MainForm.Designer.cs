@@ -39,6 +39,7 @@
             this.comboDevices2 = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.labelDevice2 = new System.Windows.Forms.Label();
+            this.checkBoxShowValues = new System.Windows.Forms.CheckBox();
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.buttonInfo = new System.Windows.Forms.Button();
             this.buttonActivate = new System.Windows.Forms.Button();
@@ -186,6 +187,17 @@
             this.labelDevice2.Size = new System.Drawing.Size(100, 23);
             this.labelDevice2.TabIndex = 3;
             // 
+            // checkBoxShowValues
+            // 
+            this.checkBoxShowValues.AutoSize = true;
+            this.checkBoxShowValues.Location = new System.Drawing.Point(11, 105);
+            this.checkBoxShowValues.Name = "checkBoxShowValues";
+            this.checkBoxShowValues.Size = new System.Drawing.Size(106, 17);
+            this.checkBoxShowValues.TabIndex = 9;
+            this.checkBoxShowValues.Text = "Show live values";
+            this.checkBoxShowValues.UseVisualStyleBackColor = true;
+            this.checkBoxShowValues.CheckedChanged += new System.EventHandler(this.checkBoxShowValues_CheckedChanged);
+            // 
             // buttonRefresh
             // 
             this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -203,7 +215,7 @@
             this.buttonInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonInfo.BackgroundImage = global::XJoy.Properties.Resources.icon_question_black_32;
             this.buttonInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonInfo.Location = new System.Drawing.Point(1201, 951);
+            this.buttonInfo.Location = new System.Drawing.Point(1201, 997);
             this.buttonInfo.Name = "buttonInfo";
             this.buttonInfo.Size = new System.Drawing.Size(32, 32);
             this.buttonInfo.TabIndex = 4;
@@ -213,7 +225,7 @@
             // buttonActivate
             // 
             this.buttonActivate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonActivate.Location = new System.Drawing.Point(11, 956);
+            this.buttonActivate.Location = new System.Drawing.Point(11, 1002);
             this.buttonActivate.Name = "buttonActivate";
             this.buttonActivate.Size = new System.Drawing.Size(75, 23);
             this.buttonActivate.TabIndex = 5;
@@ -249,7 +261,7 @@
             // labelInfo
             // 
             this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelInfo.Location = new System.Drawing.Point(92, 951);
+            this.labelInfo.Location = new System.Drawing.Point(92, 997);
             this.labelInfo.Name = "labelInfo";
             this.labelInfo.Size = new System.Drawing.Size(239, 32);
             this.labelInfo.TabIndex = 8;
@@ -268,7 +280,7 @@
             this.panelControls.Controls.Add(this.comboVJoyDevices);
             this.panelControls.Location = new System.Drawing.Point(11, 12);
             this.panelControls.Name = "panelControls";
-            this.panelControls.Size = new System.Drawing.Size(406, 90);
+            this.panelControls.Size = new System.Drawing.Size(406, 87);
             this.panelControls.TabIndex = 9;
             // 
             // label24
@@ -326,9 +338,9 @@
             this.RemappingPanel.Controls.Add(this.label5);
             this.RemappingPanel.Controls.Add(this.label4);
             this.RemappingPanel.Enabled = false;
-            this.RemappingPanel.Location = new System.Drawing.Point(11, 147);
+            this.RemappingPanel.Location = new System.Drawing.Point(11, 167);
             this.RemappingPanel.Name = "RemappingPanel";
-            this.RemappingPanel.Size = new System.Drawing.Size(1222, 798);
+            this.RemappingPanel.Size = new System.Drawing.Size(1222, 827);
             this.RemappingPanel.TabIndex = 11;
             // 
             // inputBack
@@ -336,7 +348,7 @@
             this.inputBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputBack.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputBack.FormattingEnabled = true;
-            this.inputBack.Location = new System.Drawing.Point(242, 777);
+            this.inputBack.Location = new System.Drawing.Point(242, 806);
             this.inputBack.Name = "inputBack";
             this.inputBack.Size = new System.Drawing.Size(88, 21);
             this.inputBack.TabIndex = 50;
@@ -348,7 +360,7 @@
             this.inputStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputStart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputStart.FormattingEnabled = true;
-            this.inputStart.Location = new System.Drawing.Point(242, 757);
+            this.inputStart.Location = new System.Drawing.Point(242, 786);
             this.inputStart.Name = "inputStart";
             this.inputStart.Size = new System.Drawing.Size(88, 21);
             this.inputStart.TabIndex = 49;
@@ -360,7 +372,7 @@
             this.inputRightStick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputRightStick.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputRightStick.FormattingEnabled = true;
-            this.inputRightStick.Location = new System.Drawing.Point(242, 737);
+            this.inputRightStick.Location = new System.Drawing.Point(242, 766);
             this.inputRightStick.Name = "inputRightStick";
             this.inputRightStick.Size = new System.Drawing.Size(88, 21);
             this.inputRightStick.TabIndex = 48;
@@ -372,7 +384,7 @@
             this.inputLeftStick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputLeftStick.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputLeftStick.FormattingEnabled = true;
-            this.inputLeftStick.Location = new System.Drawing.Point(242, 717);
+            this.inputLeftStick.Location = new System.Drawing.Point(242, 746);
             this.inputLeftStick.Name = "inputLeftStick";
             this.inputLeftStick.Size = new System.Drawing.Size(88, 21);
             this.inputLeftStick.TabIndex = 47;
@@ -384,7 +396,7 @@
             this.inputDPadDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputDPadDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputDPadDown.FormattingEnabled = true;
-            this.inputDPadDown.Location = new System.Drawing.Point(242, 697);
+            this.inputDPadDown.Location = new System.Drawing.Point(242, 726);
             this.inputDPadDown.Name = "inputDPadDown";
             this.inputDPadDown.Size = new System.Drawing.Size(88, 21);
             this.inputDPadDown.TabIndex = 46;
@@ -396,7 +408,7 @@
             this.inputDPadUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputDPadUp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputDPadUp.FormattingEnabled = true;
-            this.inputDPadUp.Location = new System.Drawing.Point(242, 677);
+            this.inputDPadUp.Location = new System.Drawing.Point(242, 706);
             this.inputDPadUp.Name = "inputDPadUp";
             this.inputDPadUp.Size = new System.Drawing.Size(88, 21);
             this.inputDPadUp.TabIndex = 45;
@@ -408,7 +420,7 @@
             this.inputDPadRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputDPadRight.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputDPadRight.FormattingEnabled = true;
-            this.inputDPadRight.Location = new System.Drawing.Point(242, 657);
+            this.inputDPadRight.Location = new System.Drawing.Point(242, 686);
             this.inputDPadRight.Name = "inputDPadRight";
             this.inputDPadRight.Size = new System.Drawing.Size(88, 21);
             this.inputDPadRight.TabIndex = 44;
@@ -420,7 +432,7 @@
             this.inputDPadLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputDPadLeft.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputDPadLeft.FormattingEnabled = true;
-            this.inputDPadLeft.Location = new System.Drawing.Point(242, 637);
+            this.inputDPadLeft.Location = new System.Drawing.Point(242, 666);
             this.inputDPadLeft.Name = "inputDPadLeft";
             this.inputDPadLeft.Size = new System.Drawing.Size(88, 21);
             this.inputDPadLeft.TabIndex = 43;
@@ -432,7 +444,7 @@
             this.inputRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputRB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputRB.FormattingEnabled = true;
-            this.inputRB.Location = new System.Drawing.Point(242, 617);
+            this.inputRB.Location = new System.Drawing.Point(242, 646);
             this.inputRB.Name = "inputRB";
             this.inputRB.Size = new System.Drawing.Size(88, 21);
             this.inputRB.TabIndex = 42;
@@ -444,7 +456,7 @@
             this.inputLB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputLB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputLB.FormattingEnabled = true;
-            this.inputLB.Location = new System.Drawing.Point(242, 597);
+            this.inputLB.Location = new System.Drawing.Point(242, 626);
             this.inputLB.Name = "inputLB";
             this.inputLB.Size = new System.Drawing.Size(88, 21);
             this.inputLB.TabIndex = 41;
@@ -456,7 +468,7 @@
             this.inputY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputY.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputY.FormattingEnabled = true;
-            this.inputY.Location = new System.Drawing.Point(76, 777);
+            this.inputY.Location = new System.Drawing.Point(76, 806);
             this.inputY.Name = "inputY";
             this.inputY.Size = new System.Drawing.Size(88, 21);
             this.inputY.TabIndex = 40;
@@ -468,7 +480,7 @@
             this.inputX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputX.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputX.FormattingEnabled = true;
-            this.inputX.Location = new System.Drawing.Point(76, 757);
+            this.inputX.Location = new System.Drawing.Point(76, 786);
             this.inputX.Name = "inputX";
             this.inputX.Size = new System.Drawing.Size(88, 21);
             this.inputX.TabIndex = 39;
@@ -480,7 +492,7 @@
             this.inputB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputB.FormattingEnabled = true;
-            this.inputB.Location = new System.Drawing.Point(76, 737);
+            this.inputB.Location = new System.Drawing.Point(76, 766);
             this.inputB.Name = "inputB";
             this.inputB.Size = new System.Drawing.Size(88, 21);
             this.inputB.TabIndex = 38;
@@ -492,7 +504,7 @@
             this.inputA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputA.FormattingEnabled = true;
-            this.inputA.Location = new System.Drawing.Point(76, 717);
+            this.inputA.Location = new System.Drawing.Point(76, 746);
             this.inputA.Name = "inputA";
             this.inputA.Size = new System.Drawing.Size(88, 21);
             this.inputA.TabIndex = 37;
@@ -504,7 +516,7 @@
             this.inputRT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputRT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputRT.FormattingEnabled = true;
-            this.inputRT.Location = new System.Drawing.Point(76, 697);
+            this.inputRT.Location = new System.Drawing.Point(76, 726);
             this.inputRT.Name = "inputRT";
             this.inputRT.Size = new System.Drawing.Size(88, 21);
             this.inputRT.TabIndex = 36;
@@ -516,7 +528,7 @@
             this.inputLT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputLT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputLT.FormattingEnabled = true;
-            this.inputLT.Location = new System.Drawing.Point(76, 677);
+            this.inputLT.Location = new System.Drawing.Point(76, 706);
             this.inputLT.Name = "inputLT";
             this.inputLT.Size = new System.Drawing.Size(88, 21);
             this.inputLT.TabIndex = 35;
@@ -528,7 +540,7 @@
             this.inputRSY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputRSY.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputRSY.FormattingEnabled = true;
-            this.inputRSY.Location = new System.Drawing.Point(76, 657);
+            this.inputRSY.Location = new System.Drawing.Point(76, 686);
             this.inputRSY.Name = "inputRSY";
             this.inputRSY.Size = new System.Drawing.Size(88, 21);
             this.inputRSY.TabIndex = 34;
@@ -540,7 +552,7 @@
             this.inputRSX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputRSX.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputRSX.FormattingEnabled = true;
-            this.inputRSX.Location = new System.Drawing.Point(76, 637);
+            this.inputRSX.Location = new System.Drawing.Point(76, 666);
             this.inputRSX.Name = "inputRSX";
             this.inputRSX.Size = new System.Drawing.Size(88, 21);
             this.inputRSX.TabIndex = 33;
@@ -552,7 +564,7 @@
             this.inputLSY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputLSY.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputLSY.FormattingEnabled = true;
-            this.inputLSY.Location = new System.Drawing.Point(76, 617);
+            this.inputLSY.Location = new System.Drawing.Point(76, 646);
             this.inputLSY.Name = "inputLSY";
             this.inputLSY.Size = new System.Drawing.Size(88, 21);
             this.inputLSY.TabIndex = 32;
@@ -562,7 +574,7 @@
             // label22
             // 
             this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label22.Location = new System.Drawing.Point(170, 776);
+            this.label22.Location = new System.Drawing.Point(170, 805);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(66, 20);
             this.label22.TabIndex = 31;
@@ -572,7 +584,7 @@
             // label23
             // 
             this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label23.Location = new System.Drawing.Point(170, 756);
+            this.label23.Location = new System.Drawing.Point(170, 785);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(66, 20);
             this.label23.TabIndex = 30;
@@ -582,7 +594,7 @@
             // label18
             // 
             this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label18.Location = new System.Drawing.Point(170, 736);
+            this.label18.Location = new System.Drawing.Point(170, 765);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(66, 20);
             this.label18.TabIndex = 29;
@@ -592,7 +604,7 @@
             // label19
             // 
             this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label19.Location = new System.Drawing.Point(170, 716);
+            this.label19.Location = new System.Drawing.Point(170, 745);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(66, 20);
             this.label19.TabIndex = 28;
@@ -602,7 +614,7 @@
             // label20
             // 
             this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label20.Location = new System.Drawing.Point(170, 616);
+            this.label20.Location = new System.Drawing.Point(170, 645);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(66, 20);
             this.label20.TabIndex = 27;
@@ -612,7 +624,7 @@
             // label21
             // 
             this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label21.Location = new System.Drawing.Point(170, 596);
+            this.label21.Location = new System.Drawing.Point(170, 625);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(66, 20);
             this.label21.TabIndex = 26;
@@ -622,7 +634,7 @@
             // label16
             // 
             this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label16.Location = new System.Drawing.Point(170, 696);
+            this.label16.Location = new System.Drawing.Point(170, 725);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(66, 20);
             this.label16.TabIndex = 25;
@@ -632,7 +644,7 @@
             // label17
             // 
             this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label17.Location = new System.Drawing.Point(170, 676);
+            this.label17.Location = new System.Drawing.Point(170, 705);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(66, 20);
             this.label17.TabIndex = 24;
@@ -642,7 +654,7 @@
             // label14
             // 
             this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label14.Location = new System.Drawing.Point(170, 656);
+            this.label14.Location = new System.Drawing.Point(170, 685);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(66, 20);
             this.label14.TabIndex = 23;
@@ -652,7 +664,7 @@
             // label15
             // 
             this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label15.Location = new System.Drawing.Point(170, 636);
+            this.label15.Location = new System.Drawing.Point(170, 665);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(66, 20);
             this.label15.TabIndex = 22;
@@ -662,7 +674,7 @@
             // label12
             // 
             this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label12.Location = new System.Drawing.Point(4, 776);
+            this.label12.Location = new System.Drawing.Point(4, 805);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(66, 20);
             this.label12.TabIndex = 21;
@@ -672,7 +684,7 @@
             // label13
             // 
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label13.Location = new System.Drawing.Point(4, 756);
+            this.label13.Location = new System.Drawing.Point(4, 785);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(66, 20);
             this.label13.TabIndex = 20;
@@ -682,7 +694,7 @@
             // label11
             // 
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label11.Location = new System.Drawing.Point(4, 736);
+            this.label11.Location = new System.Drawing.Point(4, 765);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(66, 20);
             this.label11.TabIndex = 19;
@@ -692,7 +704,7 @@
             // label10
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label10.Location = new System.Drawing.Point(4, 716);
+            this.label10.Location = new System.Drawing.Point(4, 745);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(66, 20);
             this.label10.TabIndex = 18;
@@ -704,7 +716,7 @@
             this.inputLSX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.inputLSX.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.inputLSX.FormattingEnabled = true;
-            this.inputLSX.Location = new System.Drawing.Point(76, 597);
+            this.inputLSX.Location = new System.Drawing.Point(76, 626);
             this.inputLSX.Name = "inputLSX";
             this.inputLSX.Size = new System.Drawing.Size(88, 21);
             this.inputLSX.TabIndex = 17;
@@ -714,7 +726,7 @@
             // label8
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label8.Location = new System.Drawing.Point(4, 696);
+            this.label8.Location = new System.Drawing.Point(4, 725);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(66, 20);
             this.label8.TabIndex = 16;
@@ -724,7 +736,7 @@
             // label9
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label9.Location = new System.Drawing.Point(4, 676);
+            this.label9.Location = new System.Drawing.Point(4, 705);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(66, 20);
             this.label9.TabIndex = 15;
@@ -734,7 +746,7 @@
             // label6
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label6.Location = new System.Drawing.Point(4, 656);
+            this.label6.Location = new System.Drawing.Point(4, 685);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 20);
             this.label6.TabIndex = 14;
@@ -744,7 +756,7 @@
             // label7
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label7.Location = new System.Drawing.Point(4, 636);
+            this.label7.Location = new System.Drawing.Point(4, 665);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(66, 20);
             this.label7.TabIndex = 13;
@@ -754,7 +766,7 @@
             // label5
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.Location = new System.Drawing.Point(4, 616);
+            this.label5.Location = new System.Drawing.Point(4, 645);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(66, 20);
             this.label5.TabIndex = 12;
@@ -764,7 +776,7 @@
             // label4
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.Location = new System.Drawing.Point(4, 596);
+            this.label4.Location = new System.Drawing.Point(4, 625);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(66, 20);
             this.label4.TabIndex = 11;
@@ -782,16 +794,16 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(11, 96);
+            this.label3.Location = new System.Drawing.Point(11, 119);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(240, 45);
+            this.label3.Size = new System.Drawing.Size(213, 45);
             this.label3.TabIndex = 10;
             this.label3.Text = "Input Remapping";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // buttonLoadMapping
             // 
-            this.buttonLoadMapping.Location = new System.Drawing.Point(371, 108);
+            this.buttonLoadMapping.Location = new System.Drawing.Point(346, 119);
             this.buttonLoadMapping.Name = "buttonLoadMapping";
             this.buttonLoadMapping.Size = new System.Drawing.Size(44, 23);
             this.buttonLoadMapping.TabIndex = 51;
@@ -801,7 +813,7 @@
             // 
             // buttonSaveMapping
             // 
-            this.buttonSaveMapping.Location = new System.Drawing.Point(325, 108);
+            this.buttonSaveMapping.Location = new System.Drawing.Point(300, 119);
             this.buttonSaveMapping.Name = "buttonSaveMapping";
             this.buttonSaveMapping.Size = new System.Drawing.Size(44, 23);
             this.buttonSaveMapping.TabIndex = 51;
@@ -811,7 +823,7 @@
             // 
             // buttonClearMapping
             // 
-            this.buttonClearMapping.Location = new System.Drawing.Point(257, 108);
+            this.buttonClearMapping.Location = new System.Drawing.Point(232, 119);
             this.buttonClearMapping.Name = "buttonClearMapping";
             this.buttonClearMapping.Size = new System.Drawing.Size(44, 23);
             this.buttonClearMapping.TabIndex = 51;
@@ -828,7 +840,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1243, 991);
+            this.ClientSize = new System.Drawing.Size(1243, 1037);
+            this.Controls.Add(this.checkBoxShowValues);
             this.Controls.Add(this.buttonClearMapping);
             this.Controls.Add(this.buttonSaveMapping);
             this.Controls.Add(this.RemappingPanel);
@@ -849,6 +862,7 @@
             this.panelControls.PerformLayout();
             this.RemappingPanel.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 
@@ -918,5 +932,6 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.SaveFileDialog saveFileDialogMapping;
         private System.Windows.Forms.Label label24;
+		private System.Windows.Forms.CheckBox checkBoxShowValues;
     }
 }
