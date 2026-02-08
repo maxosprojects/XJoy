@@ -39,14 +39,16 @@ namespace XJoy
 				Pov,
 			}
 
+			public int DeviceSlot;
 			public DirectInputManager.Inputs Input;
 			public OutputType Type;
 			public HID_USAGES Axis;
 			public uint ButtonIndex;
 			public uint PovIndex;
 
-			public InputMapping(DirectInputManager.Inputs input, HID_USAGES axis)
+			public InputMapping(int deviceSlot, DirectInputManager.Inputs input, HID_USAGES axis)
 			{
+				DeviceSlot = deviceSlot;
 				Input = input;
 				Type = OutputType.Axis;
 				Axis = axis;
@@ -54,14 +56,22 @@ namespace XJoy
 				PovIndex = 0;
 			}
 
-			public InputMapping(DirectInputManager.Inputs input, uint buttonIndex, bool isPov)
+			public InputMapping(int deviceSlot, DirectInputManager.Inputs input, uint buttonIndex, bool isPov)
 			{
+				DeviceSlot = deviceSlot;
 				Input = input;
 				Type = isPov ? OutputType.Pov : OutputType.Button;
 				Axis = HID_USAGES.HID_USAGE_X;
 				ButtonIndex = isPov ? 0 : buttonIndex;
 				PovIndex = isPov ? buttonIndex : 0;
 			}
+		}
+
+		public struct InputDefinitionEx
+		{
+			public int DeviceSlot;
+			public DirectInputManager.InputDefinition Def;
+			public string DisplayName;
 		}
 
 		public struct NullOutput
@@ -73,6 +83,7 @@ namespace XJoy
 		}
 
 		DirectInputManager diInputObj;
+		DirectInputManager diInputObj2;
 		vJoyManager vJoyObj;
 		bool bIsActive = false;
 
@@ -80,6 +91,7 @@ namespace XJoy
 		List<bool> ActiveVJoyControllers = new List<bool>();
 
 		List<InputMapping> InputMappings = new List<InputMapping>();
+		List<InputDefinitionEx> inputDefinitionsEx;
 
 		Thread feederThread = null;
 		DataGridView mappingGrid;
@@ -90,10 +102,11 @@ namespace XJoy
 			InitializeComponent();
 			try
 			{
-				label1.Text = "DirectInput Device";
+				label1.Text = "DirectInput Device A";
 				this.Text = "XJoy - DirectInput to vJoy";
 
 				diInputObj = new DirectInputManager();
+				diInputObj2 = new DirectInputManager();
 				vJoyObj = new vJoyManager();
 
 				SetupMappingGrid();
@@ -160,10 +173,17 @@ namespace XJoy
 			RemappingPanel.Controls.Add(mappingGrid);
 
 			inputDefinitions = DirectInputManager.GetInputDefinitions().ToList();
-			foreach (var def in inputDefinitions)
+			inputDefinitionsEx = new List<InputDefinitionEx>();
+			for (int slot = 0; slot < 2; slot++)
 			{
-				int rowIndex = mappingGrid.Rows.Add(def.Name, new NullOutput());
-				mappingGrid.Rows[rowIndex].Tag = def;
+				foreach (var def in inputDefinitions)
+				{
+					var displayName = (slot == 0 ? "A: " : "B: ") + def.Name;
+					var defEx = new InputDefinitionEx { DeviceSlot = slot, Def = def, DisplayName = displayName };
+					inputDefinitionsEx.Add(defEx);
+					int rowIndex = mappingGrid.Rows.Add(displayName, "<None>");
+					mappingGrid.Rows[rowIndex].Tag = defEx;
+				}
 			}
 		}
 
@@ -233,7 +253,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 						}
 					case "-a":
 						{
-							if (diInputObj.IsDeviceActive && comboVJoyDevices.SelectedItem != null)
+							if ((diInputObj.IsDeviceActive || diInputObj2.IsDeviceActive) && comboVJoyDevices.SelectedItem != null)
 								Console.WriteLine("Auto-running feeder.");
 							else
 								Console.WriteLine("Could not auto-run; no valid controllers selected.");
@@ -288,7 +308,33 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 								}
 							}
 						}
-						else if (left == "vjoy")
+												else if (left == "directinput2" || left == "di2")
+						{
+							if (right == "any")
+							{
+								if (comboDevices2.Items.Count > 0)
+									comboDevices2.SelectedIndex = 0;
+								Console.WriteLine("Set DirectInput controller 2 to first valid index.");
+							}
+							else
+							{
+								int index = -1;
+								bool s = Int32.TryParse(right, out index);
+								if (s)
+								{
+									if (index < comboDevices2.Items.Count)
+									{
+										comboDevices2.SelectedIndex = index;
+										Console.WriteLine("Set DirectInput controller 2 to #" + index);
+									}
+									else
+									{
+										Console.WriteLine("Invalid DirectInput controller 2 index #" + index);
+									}
+								}
+							}
+						}
+else if (left == "vjoy")
 						{
 							if (right == "any")
 							{
@@ -531,7 +577,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 				if (row.Tag == null)
 					continue;
 
-				var def = (DirectInputManager.InputDefinition)row.Tag;
+				var defEx = (InputDefinitionEx)row.Tag;
 				var cell = row.Cells[1] as DataGridViewComboBoxCell;
 				if (cell == null || cell.Value == null)
 					continue;
@@ -544,11 +590,11 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 				if (TryGetOutputFromString(valueText, out output))
 				{
 					if (output is vJoyManager.AnalogInput analog)
-						InputMappings.Add(new InputMapping(def.Input, analog.Axis));
+						InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, analog.Axis));
 					else if (output is vJoyManager.DigitalInput digital)
-						InputMappings.Add(new InputMapping(def.Input, digital.ButtonIndex, false));
+						InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, digital.ButtonIndex, false));
 					else if (output is vJoyManager.PovInput pov)
-						InputMappings.Add(new InputMapping(def.Input, pov.PovIndex, true));
+						InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, pov.PovIndex, true));
 				}
 			}
 		}
@@ -557,7 +603,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 		{
 			if (bActive)
 			{
-				if (diInputObj.IsDeviceActive && comboVJoyDevices.SelectedItem != null)
+				if ((diInputObj.IsDeviceActive || diInputObj2.IsDeviceActive) && comboVJoyDevices.SelectedItem != null)
 				{
 					DeviceListItem vJoyItem = comboVJoyDevices.SelectedItem as DeviceListItem;
 					if (vJoyObj != null)
@@ -587,7 +633,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 				buttonActivate.Enabled = false;
 				StopThread();
 				vJoyObj.ReleaseDevice();
-				buttonActivate.Enabled = (diInputObj.IsDeviceActive && comboVJoyDevices.SelectedItem != null);
+				buttonActivate.Enabled = ((diInputObj.IsDeviceActive || diInputObj2.IsDeviceActive) && comboVJoyDevices.SelectedItem != null);
 				buttonActivate.Text = "Activate";
 				panelControls.Enabled = true;
 				SetInfoText("Select devices and press Activate to enable.", Color.Black);
@@ -636,6 +682,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 				}));
 
 				DirectInputManager.InputState stateData;
+			DirectInputManager.InputState stateData2;
 
 				List<bool> finalButtonStates = new List<bool>();
 				int ButtonCount = vJoyObj.GetButtonCount(vJoyObj.ActiveVJoyID);
@@ -659,6 +706,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 				while (bIsActive)
 				{
 					stateData = diInputObj.GetState();
+				stateData2 = diInputObj2.GetState();
 
 					for (int i = 0; i < finalButtonStates.Count; i++)
 						finalButtonStates[i] = false;
@@ -672,12 +720,13 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 					foreach (InputMapping inputMap in InputMappings)
 					{
 						var inputKind = DirectInputManager.GetInputKind(inputMap.Input);
+						var state = inputMap.DeviceSlot == 0 ? stateData : stateData2;
 						switch (inputMap.Type)
 						{
 							case InputMapping.OutputType.Button:
 								if (inputKind == DirectInputManager.InputKind.Button)
 								{
-									bool pressed = DirectInputManager.GetButtonValue(ref stateData, inputMap.Input);
+									bool pressed = DirectInputManager.GetButtonValue(ref state, inputMap.Input);
 									if (inputMap.ButtonIndex > 0 && inputMap.ButtonIndex <= finalButtonStates.Count)
 										finalButtonStates[(int)inputMap.ButtonIndex - 1] |= pressed;
 								}
@@ -685,7 +734,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 							case InputMapping.OutputType.Axis:
 								if (inputKind == DirectInputManager.InputKind.Axis)
 								{
-									tempHidValue = DirectInputManager.GetAxisValue(ref stateData, inputMap.Input);
+									tempHidValue = DirectInputManager.GetAxisValue(ref state, inputMap.Input);
 									var range = DirectInputManager.GetAxisLimitsForInput(inputMap.Input);
 									tempHidValue = RemapValueToVJoy(tempHidValue, range[0], range[1], HidExtents[inputMap.Axis]);
 									finalHidValues[inputMap.Axis] = Math.Max(finalHidValues[inputMap.Axis], tempHidValue);
@@ -694,7 +743,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 							case InputMapping.OutputType.Pov:
 								if (inputKind == DirectInputManager.InputKind.Pov)
 								{
-									int povValue = DirectInputManager.GetPovValue(ref stateData, inputMap.Input);
+									int povValue = DirectInputManager.GetPovValue(ref state, inputMap.Input);
 									if (inputMap.PovIndex > 0 && inputMap.PovIndex <= (uint)finalPovValues.Length)
 										finalPovValues[inputMap.PovIndex - 1] = povValue;
 								}
@@ -732,7 +781,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 
 		private void RefreshUIState()
 		{
-			if (!diInputObj.IsDeviceActive || comboVJoyDevices.SelectedItem == null)
+			if ((!diInputObj.IsDeviceActive && !diInputObj2.IsDeviceActive) || comboVJoyDevices.SelectedItem == null)
 			{
 				SetActiveState(false);
 				buttonActivate.Enabled = false;
@@ -748,6 +797,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 		private void RefreshDeviceList()
 		{
 			comboDevices.Items.Clear();
+			comboDevices2.Items.Clear();
 			DirectInputDevices.Clear();
 			ActiveVJoyControllers.Clear();
 
@@ -758,6 +808,7 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 				var item = new DeviceListItem($"DirectInput: {d.InstanceName}", d.InstanceGuid, (byte)i);
 				DirectInputDevices.Add(item);
 				comboDevices.Items.Add(item);
+			comboDevices2.Items.Add(item);
 			}
 
 			comboVJoyDevices.Items.Clear();
@@ -828,7 +879,17 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 			}
 		}
 
-		private void comboVJoyDevices_SelectedIndexChanged(object sender, EventArgs e)
+				private void comboDevices2_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			DeviceListItem item = comboDevices2.SelectedItem as DeviceListItem;
+			if (item != null)
+			{
+				diInputObj2.InitDevice(item.DeviceGuid);
+				RefreshUIState();
+			}
+		}
+
+private void comboVJoyDevices_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			DeviceListItem item = comboVJoyDevices.SelectedItem as DeviceListItem;
 			if (item != null)
@@ -875,12 +936,18 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 			if (dr == DialogResult.OK)
 			{
 				bool useSelectedDI = false;
+				bool useSelectedDI2 = false;
 				bool useSelectedVJoy = false;
 				DeviceListItem selectedvJoy = comboVJoyDevices.SelectedItem as DeviceListItem;
 
 				if (diInputObj.IsDeviceActive)
 				{
-					useSelectedDI = GenericPrompt.DoPrompt("DirectInput Device", "Use selected DirectInput device or any available device?", "Selected", "Any");
+					useSelectedDI = GenericPrompt.DoPrompt("DirectInput Device A", "Use selected DirectInput device A or any available device?", "Selected", "Any");
+				}
+
+				if (diInputObj2.IsDeviceActive)
+				{
+					useSelectedDI2 = GenericPrompt.DoPrompt("DirectInput Device B", "Use selected DirectInput device B or any available device?", "Selected", "Any");
 				}
 
 				if (selectedvJoy != null)
@@ -890,8 +957,13 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 
 				StreamWriter wr = new StreamWriter(saveFileDialogMapping.FileName, false);
 
-				wr.WriteLine("DirectInput=" + (useSelectedDI ? ((DeviceListItem)comboDevices.SelectedItem).DeviceIndex.ToString() : "any"));
-				wr.WriteLine("vJoy=" + (useSelectedVJoy ? ((DeviceListItem)comboVJoyDevices.SelectedItem).DeviceIndex.ToString() : "any"));
+				string diA = (useSelectedDI && comboDevices.SelectedItem is DeviceListItem) ? ((DeviceListItem)comboDevices.SelectedItem).DeviceIndex.ToString() : "any";
+				string diB = (useSelectedDI2 && comboDevices2.SelectedItem is DeviceListItem) ? ((DeviceListItem)comboDevices2.SelectedItem).DeviceIndex.ToString() : "any";
+				string vjoy = (useSelectedVJoy && comboVJoyDevices.SelectedItem is DeviceListItem) ? ((DeviceListItem)comboVJoyDevices.SelectedItem).DeviceIndex.ToString() : "any";
+
+				wr.WriteLine("DirectInput=" + diA);
+				wr.WriteLine("DirectInput2=" + diB);
+				wr.WriteLine("vJoy=" + vjoy);
 
 				foreach (DataGridViewRow row in mappingGrid.Rows)
 				{
@@ -902,17 +974,18 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 						continue;
 
 					var inputName = row.Cells[0].Value.ToString();
-					string outputName = null;
+					var outputName = cell.Value as string;
 
-					if (cell.Value is vJoyManager.AnalogInput analog)
-						outputName = vJoyManager.AxisToFriendlyName(analog.Axis);
-					else if (cell.Value is vJoyManager.DigitalInput digital)
-						outputName = digital.ButtonIndex.ToString();
-					else if (cell.Value is vJoyManager.PovInput pov)
-						outputName = "POV" + pov.PovIndex;
+					if (string.IsNullOrEmpty(outputName) || string.Equals(outputName, "<None>", StringComparison.OrdinalIgnoreCase))
+						continue;
 
-					if (!string.IsNullOrEmpty(outputName) && !(cell.Value is NullOutput))
-						wr.WriteLine(inputName + "=" + outputName);
+					var normalized = outputName;
+					if (normalized.StartsWith("Button", StringComparison.OrdinalIgnoreCase))
+						normalized = normalized.Replace("Button", "").Replace("#", "").Trim();
+					if (normalized.StartsWith("POV", StringComparison.OrdinalIgnoreCase))
+						normalized = "POV" + normalized.Replace("POV", "").Replace("#", "").Trim();
+
+					wr.WriteLine(inputName + "=" + normalized);
 				}
 
 				wr.Close();

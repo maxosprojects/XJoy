@@ -36,7 +36,9 @@
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.comboDevices = new System.Windows.Forms.ComboBox();
+			this.comboDevices2 = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.labelDevice2 = new System.Windows.Forms.Label();
 			this.buttonRefresh = new System.Windows.Forms.Button();
 			this.buttonInfo = new System.Windows.Forms.Button();
 			this.buttonActivate = new System.Windows.Forms.Button();
@@ -151,6 +153,22 @@
 			this.comboDevices.TabIndex = 1;
 			this.comboDevices.SelectedIndexChanged += new System.EventHandler(this.comboDevices_SelectedIndexChanged);
 			// 
+			// comboDevices2
+			// 
+			this.comboDevices2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboDevices2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboDevices2.FormattingEnabled = true;
+			this.comboDevices2.Items.AddRange(new object[] {
+            "Xbox 360 Controller Wired",
+            "NVidia Shield Controller",
+            "RandomSoft© Basic Elite Airpad"});
+			this.comboDevices2.Location = new System.Drawing.Point(94, 30);
+			this.comboDevices2.Name = "comboDevices2";
+			this.comboDevices2.Size = new System.Drawing.Size(209, 21);
+			this.comboDevices2.TabIndex = 2;
+			this.comboDevices2.SelectedIndexChanged += new System.EventHandler(this.comboDevices2_SelectedIndexChanged);
+			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
@@ -158,7 +176,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(75, 13);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "XInput Device";
+			this.label1.Text = "DirectInput Device A";
 			// 
 			// buttonRefresh
 			// 
@@ -177,7 +195,7 @@
 			this.buttonInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonInfo.BackgroundImage = global::XJoy.Properties.Resources.icon_question_black_32;
 			this.buttonInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-			this.buttonInfo.Location = new System.Drawing.Point(309, 326);
+			this.buttonInfo.Location = new System.Drawing.Point(309, 356);
 			this.buttonInfo.Name = "buttonInfo";
 			this.buttonInfo.Size = new System.Drawing.Size(32, 32);
 			this.buttonInfo.TabIndex = 4;
@@ -187,7 +205,7 @@
 			// buttonActivate
 			// 
 			this.buttonActivate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.buttonActivate.Location = new System.Drawing.Point(11, 331);
+			this.buttonActivate.Location = new System.Drawing.Point(11, 361);
 			this.buttonActivate.Name = "buttonActivate";
 			this.buttonActivate.Size = new System.Drawing.Size(75, 23);
 			this.buttonActivate.TabIndex = 5;
@@ -198,7 +216,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(3, 33);
+			this.label2.Location = new System.Drawing.Point(3, 60);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(66, 13);
 			this.label2.TabIndex = 7;
@@ -214,7 +232,7 @@
             "Xbox 360 Controller Wired",
             "NVidia Shield Controller",
             "RandomSoft© Basic Elite Airpad"});
-			this.comboVJoyDevices.Location = new System.Drawing.Point(94, 30);
+			this.comboVJoyDevices.Location = new System.Drawing.Point(94, 57);
 			this.comboVJoyDevices.Name = "comboVJoyDevices";
 			this.comboVJoyDevices.Size = new System.Drawing.Size(209, 21);
 			this.comboVJoyDevices.TabIndex = 6;
@@ -223,7 +241,7 @@
 			// labelInfo
 			// 
 			this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelInfo.Location = new System.Drawing.Point(92, 326);
+			this.labelInfo.Location = new System.Drawing.Point(92, 356);
 			this.labelInfo.Name = "labelInfo";
 			this.labelInfo.Size = new System.Drawing.Size(204, 32);
 			this.labelInfo.TabIndex = 8;
@@ -233,13 +251,15 @@
 			// panelControls
 			// 
 			this.panelControls.Controls.Add(this.comboDevices);
+			this.panelControls.Controls.Add(this.comboDevices2);
 			this.panelControls.Controls.Add(this.label1);
+			this.panelControls.Controls.Add(this.labelDevice2);
 			this.panelControls.Controls.Add(this.buttonRefresh);
 			this.panelControls.Controls.Add(this.label2);
 			this.panelControls.Controls.Add(this.comboVJoyDevices);
 			this.panelControls.Location = new System.Drawing.Point(11, 12);
 			this.panelControls.Name = "panelControls";
-			this.panelControls.Size = new System.Drawing.Size(330, 60);
+			this.panelControls.Size = new System.Drawing.Size(330, 90);
 			this.panelControls.TabIndex = 9;
 			// 
 			// RemappingPanel
@@ -288,7 +308,7 @@
 			this.RemappingPanel.Controls.Add(this.label5);
 			this.RemappingPanel.Controls.Add(this.label4);
 			this.RemappingPanel.Enabled = false;
-			this.RemappingPanel.Location = new System.Drawing.Point(11, 117);
+			this.RemappingPanel.Location = new System.Drawing.Point(11, 147);
 			this.RemappingPanel.Name = "RemappingPanel";
 			this.RemappingPanel.Size = new System.Drawing.Size(330, 203);
 			this.RemappingPanel.TabIndex = 11;
@@ -790,7 +810,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(351, 366);
+			this.ClientSize = new System.Drawing.Size(351, 396);
 			this.Controls.Add(this.buttonClearMapping);
 			this.Controls.Add(this.buttonSaveMapping);
 			this.Controls.Add(this.RemappingPanel);
@@ -823,7 +843,9 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ComboBox comboDevices;
+		private System.Windows.Forms.ComboBox comboDevices2;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label labelDevice2;
 		private System.Windows.Forms.Button buttonRefresh;
 		private System.Windows.Forms.Button buttonInfo;
 		private System.Windows.Forms.Button buttonActivate;
