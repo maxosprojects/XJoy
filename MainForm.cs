@@ -86,6 +86,7 @@ namespace XJoy
 		DirectInputManager diInputObj2;
 		vJoyManager vJoyObj;
 		bool bIsActive = false;
+		bool hidGuardianWhitelisted = false;
 
 		List<DeviceListItem> DirectInputDevices = new List<DeviceListItem>();
 		List<bool> ActiveVJoyControllers = new List<bool>();
@@ -108,6 +109,7 @@ namespace XJoy
 				diInputObj = new DirectInputManager();
 				diInputObj2 = new DirectInputManager();
 				vJoyObj = new vJoyManager();
+				hidGuardianWhitelisted = HidGuardianHelper.TryInsertCurrentProcessToWhiteList();
 
 				SetupMappingGrid();
 				RefreshDeviceList();
@@ -115,6 +117,8 @@ namespace XJoy
 				Application.ApplicationExit += new EventHandler(delegate (Object o, EventArgs a)
 				{
 					StopThread();
+					if (hidGuardianWhitelisted)
+						HidGuardianHelper.TryRemoveCurrentProcessFromWhiteList();
 
 					if (MainNotifyIcon != null)
 					{
@@ -991,5 +995,5 @@ private void comboVJoyDevices_SelectedIndexChanged(object sender, EventArgs e)
 				wr.Close();
 			}
 		}
-	}
+    }
 }
