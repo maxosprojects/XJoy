@@ -29,7 +29,24 @@ namespace XJoy
 			}
 		}
 
-		public class AnalogInput
+		
+		public class PovInput
+		{
+			public uint PovIndex;
+			string DisplayName;
+
+			public PovInput(uint _PovIndex, string _DisplayName)
+			{
+				PovIndex = _PovIndex;
+				DisplayName = _DisplayName;
+			}
+
+			public override string ToString()
+			{
+				return DisplayName;
+			}
+		}
+public class AnalogInput
 		{
 			public HID_USAGES Axis;
 			string DisplayName;
@@ -176,7 +193,14 @@ namespace XJoy
 			return minval;
 		}
 
-		public int GetButtonCount(uint Index)
+		
+		public int GetPovCount(uint Index)
+		{
+			int cont = m_joystick.GetVJDContPovNumber(Index);
+			int disc = m_joystick.GetVJDDiscPovNumber(Index);
+			return Math.Max(cont, disc);
+		}
+public int GetButtonCount(uint Index)
 		{
 			return m_joystick.GetVJDButtonNumber(Index);
 		}
@@ -212,7 +236,16 @@ namespace XJoy
 			}
 		}
 
-		public void SetAxis(HID_USAGES Axis, int Value)
+		
+		public void SetPov(uint PovIndex, int Value)
+		{
+			if (bDeviceAcquired)
+			{
+				// vJoy POV index is 1-based; Value is -1 (neutral) or 0-35999.
+				m_joystick.SetContPov(Value, m_vJoyID, PovIndex);
+			}
+		}
+public void SetAxis(HID_USAGES Axis, int Value)
 		{
 			if(bDeviceAcquired)
 			{

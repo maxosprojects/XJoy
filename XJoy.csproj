@@ -45,6 +45,10 @@
       <HintPath>packages\SharpDX.XInput.3.0.1\lib\net45\SharpDX.XInput.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SharpDX.DirectInput, Version=3.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.DirectInput.3.0.1\lib\net45\SharpDX.DirectInput.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,7 +65,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GenericPrompt.cs">
+        <Compile Include="DirectInputManager.cs" />
+<Compile Include="GenericPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GenericPrompt.Designer.cs">
