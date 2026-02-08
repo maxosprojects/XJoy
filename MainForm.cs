@@ -87,6 +87,7 @@ namespace XJoy
 		vJoyManager vJoyObj;
 		bool bIsActive = false;
 		bool hidGuardianWhitelisted = false;
+		const int ColumnGroupCount = 3;
 
 		List<DeviceListItem> DirectInputDevices = new List<DeviceListItem>();
 		List<bool> ActiveVJoyControllers = new List<bool>();
@@ -150,24 +151,44 @@ namespace XJoy
 			mappingGrid.AllowUserToAddRows = false;
 			mappingGrid.AllowUserToDeleteRows = false;
 			mappingGrid.RowHeadersVisible = false;
-			mappingGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			mappingGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 			mappingGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 			mappingGrid.MultiSelect = false;
 			mappingGrid.BackgroundColor = RemappingPanel.BackColor;
 			mappingGrid.BorderStyle = BorderStyle.None;
+			mappingGrid.ScrollBars = ScrollBars.Both;
 
-			var inputCol = new DataGridViewTextBoxColumn();
-			inputCol.HeaderText = "DirectInput";
-			inputCol.ReadOnly = true;
-			inputCol.SortMode = DataGridViewColumnSortMode.NotSortable;
+			for (int group = 0; group < ColumnGroupCount; group++)
+			{
+				var inputCol = new DataGridViewTextBoxColumn();
+				inputCol.HeaderText = "DirectInput";
+				inputCol.ReadOnly = true;
+				inputCol.SortMode = DataGridViewColumnSortMode.NotSortable;
+				inputCol.Width = 160;
 
-			var outputCol = new DataGridViewComboBoxColumn();
-			outputCol.HeaderText = "vJoy Output";
-			outputCol.DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton;
-			outputCol.FlatStyle = FlatStyle.Flat;
+				var outputCol = new DataGridViewComboBoxColumn();
+				outputCol.HeaderText = "vJoy Output";
+				outputCol.DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton;
+				outputCol.FlatStyle = FlatStyle.Flat;
+				outputCol.Width = 140;
 
-			mappingGrid.Columns.Add(inputCol);
-			mappingGrid.Columns.Add(outputCol);
+				var valueCol = new DataGridViewTextBoxColumn();
+				valueCol.HeaderText = "Value";
+				valueCol.ReadOnly = true;
+				valueCol.SortMode = DataGridViewColumnSortMode.NotSortable;
+				valueCol.Width = 80;
+
+				mappingGrid.Columns.Add(inputCol);
+				mappingGrid.Columns.Add(outputCol);
+				mappingGrid.Columns.Add(valueCol);
+
+				var spacerCol = new DataGridViewTextBoxColumn();
+				spacerCol.HeaderText = "";
+				spacerCol.ReadOnly = true;
+				spacerCol.SortMode = DataGridViewColumnSortMode.NotSortable;
+				spacerCol.Width = 12;
+				mappingGrid.Columns.Add(spacerCol);
+			}
 
 			mappingGrid.CellValueChanged += MappingGrid_CellValueChanged;
 			mappingGrid.CurrentCellDirtyStateChanged += MappingGrid_CurrentCellDirtyStateChanged;
@@ -185,8 +206,45 @@ namespace XJoy
 					var displayName = (slot == 0 ? "A: " : "B: ") + def.Name;
 					var defEx = new InputDefinitionEx { DeviceSlot = slot, Def = def, DisplayName = displayName };
 					inputDefinitionsEx.Add(defEx);
-					int rowIndex = mappingGrid.Rows.Add(displayName, "<None>");
-					mappingGrid.Rows[rowIndex].Tag = defEx;
+				}
+			}
+
+			int rows = (int)Math.Ceiling(inputDefinitionsEx.Count / (double)ColumnGroupCount);
+			for (int r = 0; r < rows; r++)
+			{
+				var rowIndex = mappingGrid.Rows.Add();
+				var row = mappingGrid.Rows[rowIndex];
+				for (int group = 0; group < ColumnGroupCount; group++)
+				{
+					int idx = (group * rows) + r;
+					int colBase = group * 4;
+					var outputCell = row.Cells[colBase + 1] as DataGridViewComboBoxCell;
+					if (idx < inputDefinitionsEx.Count)
+					{
+						var defEx = inputDefinitionsEx[idx];
+						row.Cells[colBase].Value = defEx.DisplayName;
+						if (outputCell != null)
+						{
+							outputCell.Value = "<None>";
+							outputCell.Tag = defEx;
+							outputCell.ReadOnly = false;
+							outputCell.DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton;
+						}
+						row.Cells[colBase + 2].Value = "";
+					}
+					else
+					{
+						row.Cells[colBase].Value = "";
+						if (outputCell != null)
+						{
+							outputCell.Value = "";
+							outputCell.Tag = null;
+							outputCell.ReadOnly = true;
+							outputCell.DisplayStyle = DataGridViewComboBoxDisplayStyle.Nothing;
+						}
+						row.Cells[colBase + 2].Value = "";
+					}
+					row.Cells[colBase + 3].Value = "";
 				}
 			}
 		}
@@ -208,7 +266,10 @@ private void MappingGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e
 
 		private void MappingGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex == 1)
+			if (e.ColumnIndex < 0)
+				return;
+			// Output columns are the second column in each group (index 1,5,9,...).
+			if (e.ColumnIndex % 4 == 1)
 				UpdateInputMappings();
 		}
 
@@ -391,46 +452,53 @@ else if (left == "vjoy")
 
 		private void ParseConfigMapping(string From, string To)
 		{
-			var row = GetRowForInput(From);
-			if (row != null)
+			var cell = GetOutputCellForInput(From);
+			if (cell == null)
 			{
-				var cell = row.Cells[1] as DataGridViewComboBoxCell;
-				if (cell == null)
-					return;
+				Console.WriteLine("Failed to find input row for '" + From + "'");
+				return;
+			}
 
-				object output;
-				if (TryGetOutputFromString(To, out output))
+			object output;
+			if (TryGetOutputFromString(To, out output))
+			{
+				foreach (var item in cell.Items)
 				{
-					foreach (var item in cell.Items)
+					if (string.Equals(item.ToString(), output.ToString(), StringComparison.OrdinalIgnoreCase))
 					{
-						if (item.ToString().ToLower() == output.ToString().ToLower())
-						{
-							cell.Value = item;
-							return;
-						}
+						cell.Value = item;
+						return;
 					}
-					Console.WriteLine("Failed to find output mapping for '" + To + "'");
 				}
-				else
-				{
-					Console.WriteLine("Failed to parse output mapping for '" + To + "'");
-				}
+				Console.WriteLine("Failed to find output mapping for '" + To + "'");
 			}
 			else
 			{
-				Console.WriteLine("Failed to find input row for '" + From + "'");
+				Console.WriteLine("Failed to parse output mapping for '" + To + "'");
 			}
 		}
 
-		private DataGridViewRow GetRowForInput(string From)
+		private DataGridViewComboBoxCell GetOutputCellForInput(string From)
 		{
-			string lower = From.ToLower();
+			string lower = From.ToLower().Trim();
+			string noPrefix = lower;
+			if (lower.StartsWith("a:") || lower.StartsWith("b:"))
+				noPrefix = lower.Substring(2).Trim();
+
 			foreach (DataGridViewRow row in mappingGrid.Rows)
 			{
-				if (row.Cells[0].Value == null)
-					continue;
-				if (row.Cells[0].Value.ToString().ToLower() == lower)
-					return row;
+				for (int group = 0; group < ColumnGroupCount; group++)
+				{
+					int colBase = group * 4;
+					var inputCell = row.Cells[colBase];
+					var outputCell = row.Cells[colBase + 1] as DataGridViewComboBoxCell;
+					if (inputCell == null || outputCell == null || inputCell.Value == null)
+						continue;
+
+					var cellText = inputCell.Value.ToString().ToLower().Trim();
+					if (cellText == lower || cellText == noPrefix)
+						return outputCell;
+				}
 			}
 			return null;
 		}
@@ -550,25 +618,39 @@ else if (left == "vjoy")
 
 			foreach (DataGridViewRow row in mappingGrid.Rows)
 			{
-				var cell = row.Cells[1] as DataGridViewComboBoxCell;
-				if (cell == null)
-					continue;
+				for (int group = 0; group < ColumnGroupCount; group++)
+				{
+					int colBase = group * 4;
+					RefreshOutputCell(row.Cells[colBase + 1] as DataGridViewComboBoxCell, outputs);
+				}
+			}
+		}
 
-				string current = cell.Value as string;
-				cell.Value = outputs[0];
+		static void RefreshOutputCell(DataGridViewComboBoxCell cell, List<string> outputs)
+		{
+			if (cell == null)
+				return;
+			if (cell.Tag == null)
+			{
 				cell.Items.Clear();
-				foreach (var item in outputs)
-					cell.Items.Add(item);
+				cell.Value = "";
+				return;
+			}
 
-				if (!string.IsNullOrEmpty(current))
-				{
-					var match = outputs.FirstOrDefault(o => string.Equals(o, current, StringComparison.OrdinalIgnoreCase));
-					cell.Value = match ?? outputs[0];
-				}
-				else
-				{
-					cell.Value = outputs[0];
-				}
+			string current = cell.Value as string;
+			cell.Value = outputs[0];
+			cell.Items.Clear();
+			foreach (var item in outputs)
+				cell.Items.Add(item);
+
+			if (!string.IsNullOrEmpty(current))
+			{
+				var match = outputs.FirstOrDefault(o => string.Equals(o, current, StringComparison.OrdinalIgnoreCase));
+				cell.Value = match ?? outputs[0];
+			}
+			else
+			{
+				cell.Value = outputs[0];
 			}
 		}
 
@@ -578,28 +660,33 @@ else if (left == "vjoy")
 
 			foreach (DataGridViewRow row in mappingGrid.Rows)
 			{
-				if (row.Tag == null)
-					continue;
-
-				var defEx = (InputDefinitionEx)row.Tag;
-				var cell = row.Cells[1] as DataGridViewComboBoxCell;
-				if (cell == null || cell.Value == null)
-					continue;
-
-				var valueText = cell.Value as string;
-				if (string.IsNullOrEmpty(valueText) || valueText == "<None>")
-					continue;
-
-				object output;
-				if (TryGetOutputFromString(valueText, out output))
+				for (int group = 0; group < ColumnGroupCount; group++)
 				{
-					if (output is vJoyManager.AnalogInput analog)
-						InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, analog.Axis));
-					else if (output is vJoyManager.DigitalInput digital)
-						InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, digital.ButtonIndex, false));
-					else if (output is vJoyManager.PovInput pov)
-						InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, pov.PovIndex, true));
+					int colBase = group * 4;
+					UpdateInputMappingFromCell(row.Cells[colBase + 1] as DataGridViewComboBoxCell);
 				}
+			}
+		}
+
+		void UpdateInputMappingFromCell(DataGridViewComboBoxCell cell)
+		{
+			if (cell == null || cell.Value == null || cell.Tag == null)
+				return;
+
+			var defEx = (InputDefinitionEx)cell.Tag;
+			var valueText = cell.Value as string;
+			if (string.IsNullOrEmpty(valueText) || valueText == "<None>")
+				return;
+
+			object output;
+			if (TryGetOutputFromString(valueText, out output))
+			{
+				if (output is vJoyManager.AnalogInput analog)
+					InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, analog.Axis));
+				else if (output is vJoyManager.DigitalInput digital)
+					InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, digital.ButtonIndex, false));
+				else if (output is vJoyManager.PovInput pov)
+					InputMappings.Add(new InputMapping(defEx.DeviceSlot, defEx.Def.Input, pov.PovIndex, true));
 			}
 		}
 
@@ -708,10 +795,11 @@ else if (left == "vjoy")
 					finalPovValues[i] = -1;
 
 				int tempHidValue = 0;
+				var lastValueUpdate = DateTime.MinValue;
 				while (bIsActive)
 				{
 					stateData = diInputObj.GetState();
-				stateData2 = diInputObj2.GetState();
+					stateData2 = diInputObj2.GetState();
 
 					for (int i = 0; i < finalButtonStates.Count; i++)
 						finalButtonStates[i] = false;
@@ -780,11 +868,57 @@ else if (left == "vjoy")
 						}
 					}
 
+					if ((DateTime.UtcNow - lastValueUpdate).TotalMilliseconds >= 100)
+					{
+						lastValueUpdate = DateTime.UtcNow;
+						UpdateValueCells(stateData, stateData2);
+					}
+
 					Thread.Sleep(16);
 				}
 			}
 			catch (ThreadAbortException)
 			{
+			}
+		}
+
+		void UpdateValueCells(DirectInputManager.InputState stateA, DirectInputManager.InputState stateB)
+		{
+			if (mappingGrid.IsDisposed)
+				return;
+
+			if (mappingGrid.InvokeRequired)
+			{
+				mappingGrid.BeginInvoke((Action)(() => UpdateValueCells(stateA, stateB)));
+				return;
+			}
+
+			foreach (DataGridViewRow row in mappingGrid.Rows)
+			{
+				for (int group = 0; group < ColumnGroupCount; group++)
+				{
+					int colBase = group * 4;
+					var outputCell = row.Cells[colBase + 1] as DataGridViewComboBoxCell;
+					var valueCell = row.Cells[colBase + 2];
+					if (outputCell == null || outputCell.Tag == null || valueCell == null)
+						continue;
+
+					var defEx = (InputDefinitionEx)outputCell.Tag;
+					var state = defEx.DeviceSlot == 0 ? stateA : stateB;
+					var kind = DirectInputManager.GetInputKind(defEx.Def.Input);
+					switch (kind)
+					{
+						case DirectInputManager.InputKind.Axis:
+							valueCell.Value = DirectInputManager.GetAxisValue(ref state, defEx.Def.Input).ToString();
+							break;
+						case DirectInputManager.InputKind.Pov:
+							valueCell.Value = DirectInputManager.GetPovValue(ref state, defEx.Def.Input).ToString();
+							break;
+						case DirectInputManager.InputKind.Button:
+							valueCell.Value = DirectInputManager.GetButtonValue(ref state, defEx.Def.Input) ? "1" : "0";
+							break;
+					}
+				}
 			}
 		}
 
@@ -941,7 +1075,7 @@ private void comboVJoyDevices_SelectedIndexChanged(object sender, EventArgs e)
 			RefreshDeviceList();
 		}
 
-		private void onInputMappingChanged(object sender, EventArgs e)
+private void onInputMappingChanged(object sender, EventArgs e)
 		{
 			UpdateInputMappings();
 		}
@@ -1004,25 +1138,27 @@ private void comboVJoyDevices_SelectedIndexChanged(object sender, EventArgs e)
 
 				foreach (DataGridViewRow row in mappingGrid.Rows)
 				{
-					if (row.Cells[0].Value == null)
-						continue;
-					var cell = row.Cells[1] as DataGridViewComboBoxCell;
-					if (cell == null || cell.Value == null)
-						continue;
+					for (int group = 0; group < ColumnGroupCount; group++)
+					{
+						int colBase = group * 4;
+						var inputCell = row.Cells[colBase];
+						var cell = row.Cells[colBase + 1] as DataGridViewComboBoxCell;
+						if (inputCell == null || inputCell.Value == null || cell == null || cell.Value == null)
+							continue;
 
-					var inputName = row.Cells[0].Value.ToString();
-					var outputName = cell.Value as string;
+						var inputName = inputCell.Value.ToString();
+						var outputName = cell.Value as string;
+						if (string.IsNullOrEmpty(outputName) || string.Equals(outputName, "<None>", StringComparison.OrdinalIgnoreCase))
+							continue;
 
-					if (string.IsNullOrEmpty(outputName) || string.Equals(outputName, "<None>", StringComparison.OrdinalIgnoreCase))
-						continue;
+						var normalized = outputName;
+						if (normalized.StartsWith("Button", StringComparison.OrdinalIgnoreCase))
+							normalized = normalized.Replace("Button", "").Replace("#", "").Trim();
+						if (normalized.StartsWith("POV", StringComparison.OrdinalIgnoreCase))
+							normalized = "POV" + normalized.Replace("POV", "").Replace("#", "").Trim();
 
-					var normalized = outputName;
-					if (normalized.StartsWith("Button", StringComparison.OrdinalIgnoreCase))
-						normalized = normalized.Replace("Button", "").Replace("#", "").Trim();
-					if (normalized.StartsWith("POV", StringComparison.OrdinalIgnoreCase))
-						normalized = "POV" + normalized.Replace("POV", "").Replace("#", "").Trim();
-
-					wr.WriteLine(inputName + "=" + normalized);
+						wr.WriteLine(inputName + "=" + normalized);
+					}
 				}
 
 				wr.Close();
