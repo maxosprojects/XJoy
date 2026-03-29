@@ -190,6 +190,8 @@
             // checkBoxShowValues
             // 
             this.checkBoxShowValues.AutoSize = true;
+            this.checkBoxShowValues.Checked = true;
+            this.checkBoxShowValues.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxShowValues.Location = new System.Drawing.Point(11, 105);
             this.checkBoxShowValues.Name = "checkBoxShowValues";
             this.checkBoxShowValues.Size = new System.Drawing.Size(106, 17);
